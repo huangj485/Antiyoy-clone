@@ -1,0 +1,267 @@
+class unit:
+    #1 is sword, 2 is spear, 3 is axe   
+    
+    def __init__(self, weapon, level, location, player):
+        self.weapon = weapon
+        self.level = level
+        self.location = location
+        self.movement = 4        #create movement variable? to be entered that is
+        self.player = player
+        print (self.location, self.level, self.weapon)
+    def attackedBy(self, damage):
+        self.level -= damage
+    
+    def attack(self,defender):
+        damage = self.getAttackDamage(defender)
+        if damage >= 0:
+            defender.attackedBy(damage)
+        elif damage == 0:
+            defender.attackedBy(1)
+            self.attackedBy(1)
+        else:
+            print("can't attack")
+            return
+            # do something here
+    def getAttackDamage(self,defender):
+        if defender.location.identity == 2: #remember to add more if we create more defensive tiles
+            return self.level-defender.level+self.advantageOver(defender) - 1
+        else: 
+            return self.level-defender.level+self.advantageOver(defender)
+    def advantageOver(self,defender):
+        advantage = defender.weapon-self.weapon
+        if advantage == -2 or advantage == 1:
+            return -1
+        elif advantage == -1 or advantage == 2:
+            return 1
+        elif advantage == 0:
+            return 0
+    def move(self, tile):
+        if self.movement > 0 and self.location.isTileAdjacent(tile):
+            self.location = tile #needs to be finished
+            self.movement -= tile.movementCost(self.movement)
+    def clrMovement(self):
+        self.movement = 4
+    def supply(self): #finish maybe make this a different class?
+        allGood = False:
+        if self.location.player == self.player
+            allGood = True
+        else:
+            locs = self.location.everythingWithinRadius(1)
+            for x in range(len(locs)):
+                if x.road and (x.roadOwnership==(self.player or -1):
+                    allGood = True #complete
+        
+class swordsman(unit):
+    cost = 5 #to be replaced
+    def __init__(self, level, location, player):
+        unit.__init__(self, 1, level, location, player)
+    def buildRoad(self, location):
+        if movement < 4:
+            print("Not enough movement") #temp until we can properly make an error
+        elif location.road == False: 
+            location.road = True #make sure cost is reduced in the larger economy kind of schtick
+            
+            print("road built") #if necessary we can return a validation thing or something
+class spearman(unit):
+    def __init__(self, level, location, player):
+        unit.__init__(self, 2, level, location, player)
+class axeman(unit):
+    def __init__(self, level, location, player):
+        unit.__init__(self, 3, level, location, player)
+    def killTree(self):
+        if self.location.identity == 1:
+            self.location.identity = 0
+            self.movement = 0
+        else:
+            print("it's not a tree you buffoon")
+        
+class tile: #a hexagon with the pointy side up/down
+    #identity 0 is empty, 1 is tree, 2 is fort
+    road = False
+    def __init__(self,x,y,identity,player): 
+        self.x = x
+        self.y = y
+        self.identity = identity
+        self.player = player
+        self.roadOwnership == player #-1 is in dispute, 0 is owned by neither; in dispute is when both people have connections to it
+    def isTileAdjacent(self,t):    #is this obsolete
+        return (abs(t.x-self.x)== .5 and abs(t.y-self.y) == 1) or (abs(t.x-self.x)== 1 and t.y == self.y)
+    def movementCost(self, movement):
+        if self.road:
+            return .5
+        elif self.identity == 1:
+            return 4
+        else:    
+            return 1
+    def income(self):
+        if self.identity == 1:
+            return 0
+        if self.identity == 0:
+            return 1
+        if self.identity == 2:
+            return -5 #value is temporary
+        #add more tile identities
+    def everythingWithinRadius(self,radius):
+        returnVal = []
+        x = -radius/2
+        y = -radius
+        while y<=radius:
+            leftx = x
+            while x<=abs(leftx):
+                p = (self.x+x,self.y+y)
+                if p in currentGame.tiles:
+                    returnVal.append(p)
+                x+=1
+            x=leftx
+            y+=1
+            if y>0:
+                x+=.5
+            else:
+                x-=.5
+        return returnVal
+class town: #towns must have roads be true
+    def __init__(self, location, player):
+        self.centerLoc = location
+        self.player = player
+        self.spotsIn = []
+        currentGame.roadSystem.add(centerLoc)
+        for t self.location.everythingWithinRadius(2):
+            if t.identity.__class__ != town and t.identity != 2:
+                t.identity = self
+                spotsIn.append(t)
+    def endTurn(self):
+        toReturn = 0
+        for x in range(0, len(self.spotsIn)):
+            toReturn += self.spotsIn[x].income()
+                 
+class roadConnects: 
+    def __init__(self, start)
+        self.connections = []
+        connection = []
+        for x in range(leng(start))
+            connection.append(start[x])
+            self.connections.append(connection)
+            self.add(start[x])
+    def add(location)
+        isFound = False
+        Ringdingding = 0
+        for t in self.location.everythingWithinRadius(1):
+            if t.road:
+                for c in self.connections:
+                    if t in c:
+                        c.append(location)
+                        isFound = True
+                        Ringdingding += 1
+        if Ringdingding >= 2:
+            tempArray = self.connections[:]
+            for t in self.location.everythingWithinRadius(1):
+                for c in tempArray:
+                    temp = -1
+                    connectionsIndex = 0
+                    if t in c:
+                        if(temp == -1):
+                            temp = c
+                        else:
+                            self.connections[temp].extend(c)
+                            del self.connections[c]
+                            c -= 1         
+                    connectionsIndex += 1
+        elif !isFound:
+            connection = []
+            self.connections.append(connection)
+            self.connections[len(self.connections)-1].append(location)
+class city:
+    def __init__(self, location, player):
+        self.centerLoc = location
+        self.player = player
+        towns = []
+    def addTown(self, town): 
+        self.towns.append(town)
+    def endTurn(self):
+        toReturn = 0
+        for x in range(0, len(self.towns)):
+            toReturn += self.towns[x].endTurn()
+        return toReturn
+class player:
+    units = []
+    towns = []
+    cities = []
+    
+    #temp variables
+    moniez = 20 #not final
+    level1Maintenance = 1
+    level2Maintenance = 5
+    level3Maintenance = 15 #VERY TEMPORARY
+    level1Cost = 10    #SO TEMPORARY
+    level2Cost = 20
+    level3Cost = 40
+    spearmanModifier = .8
+    def __init__(self, city, playerNum):
+        self.capital = city
+        self.playerNum = playerNum
+    def levelCost(level, weapon)
+        if weapon != 2
+            if level == 1
+                return level1Maintenance
+            if level == 2
+                return level2Maintenance
+            if level == 3
+                return level3Maintenance
+        if weapon == 2
+            if level == 1
+                return level1Maintenance*spearmanModifier
+            if level == 2
+                return level2Maintenance*spearmanModifier
+            if level == 3
+                return level3Maintenance*spearmanModifier
+    def buyUnit(self, level, location, weapon):
+        cost = player.levelCost(level, weapon)
+        if weapon == 1:
+            if moniez > cost
+                moniez -= cost
+                self.units.append(swordsman(level, location, playerNum))
+            else:
+                print("you poor fuck")
+        if weapon == 2:
+            if moniez > cost
+                moniez -= cost
+                self.units.append(spearman(level, location, playerNum))
+            else:
+                print("you poor fuck")
+        if weapon == 3:
+            if moniez > cost
+                moniez -= cost
+                self.units.append(axeman(level, location, playerNum))
+            else:
+                print("you poor fuck")
+    def endTurn():
+        for x in range(0, len(self.units)):
+            if units[x].level == 1:
+                moniez -= level1Maintenance
+            if units[x].level == 2:
+                moniez -= level2Maintenance
+            if units[x].level == 3:
+                moniez -= level3Maintenance
+            units[x].supply()
+            units[x].clrMovement()
+        for x in range(0, len(self.cities)):
+            moniez += self.cities[x].endTurn()
+        if moniez < 0:
+            for x in range(0, len(self.units)):
+                self.units[x].level -= 1
+                if self.units[x].level < 0
+                    self.units.remove(0)
+            moniez = 0
+
+
+class game:
+    players = []
+    tiles = {} # map of (x,y) to a tile
+    def __init__(self, players, size, startingTiles, etc)#FINISH
+        #initialize all tiles
+        for x in range(len(players)) #players is an array with the name of all players
+            startingTiles[x].player = playerNum #finish
+            self.players[x] = player(startingTiles[x], x)
+        self.players.insert(0,0) #0 is just a mark of not belonging to a player
+        self.roadSystem = roadConnects(startingTiles) #startingTiles is an array with starting tiles of cities
+currentGame = game()
